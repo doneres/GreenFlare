@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultar Sinistros - GreenFire</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f1f3f5;
+        font-family: "Roboto", sans-serif;
+      }
+
+      .container {
+        margin-top: 50px;
+      }
+
+      .logo {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #28a745;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo i {
+        color: #e63946;
+        margin-right: 10px;
+        font-size: 2.8rem;
+      }
+
+      .header-text {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #343a40;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .table-container {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-bar {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Logo da Empresa -->
+      <div class="logo"><i class="bi bi-fire"></i>GreenFire</div>
+
+      <!-- Título -->
+      <div class="header-text">Consultar seus Sinistros</div>
+
+      <!-- Barra de Pesquisa -->
+      <input
+        type="text"
+        class="form-control search-bar"
+        id="search"
+        placeholder="Pesquise pelo número do sinistro ou nome do cliente"
+      />
+
+      <!-- Tabela de Sinistros -->
+      <div class="table-container">
+        <table class="table table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nome do Cliente</th>
+              <th scope="col">Data do Sinistro</th>
+              <th scope="col">Status</th>
+              <th scope="col">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="sinistroTable">
+            <!-- Aqui serão exibidos os sinistros cadastrados -->
+            <tr>
+              <th scope="row">001</th>
+              <td>João Silva</td>
+              <td>10/10/2024</td>
+              <td><span class="badge bg-success">Concluído</span></td>
+              <td>
+                <button class="btn btn-info btn-sm" onclick="verDetalhes(1)">
+                  <i class="bi bi-eye"></i> Ver
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">002</th>
+              <td>Maria Oliveira</td>
+              <td>11/10/2024</td>
+              <td><span class="badge bg-warning">Em análise</span></td>
+              <td>
+                <button class="btn btn-info btn-sm" onclick="verDetalhes(2)">
+                  <i class="bi bi-eye"></i> Ver
+                </button>
+              </td>
+            </tr>
+            <!-- Exemplo de mais sinistros -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      // Função para visualizar os detalhes do sinistro
+      function verDetalhes(id) {
+        alert("Visualizando detalhes do sinistro #" + id);
+        // Aqui você pode redirecionar para uma página de detalhes ou abrir um modal com informações do sinistro
+      }
+
+      // Função para pesquisa dinâmica (filtro)
+      document.getElementById("search").addEventListener("input", function () {
+        var searchValue = this.value.toLowerCase();
+        var rows = document.querySelectorAll("#sinistroTable tr");
+
+        rows.forEach(function (row) {
+          var clienteNome = row
+            .querySelectorAll("td")[0]
+            .textContent.toLowerCase();
+          var sinistroNum = row
+            .querySelectorAll("th")[0]
+            .textContent.toLowerCase();
+          if (
+            clienteNome.includes(searchValue) ||
+            sinistroNum.includes(searchValue)
+          ) {
+            row.style.display = "";
+          } else {
+            row.style.display = "none";
+          }
+        });
+      });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

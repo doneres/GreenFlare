@@ -1,0 +1,105 @@
+/* Estilos globais */
+body {
+    background-color: #032602; /* Fundo verde escuro */
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Logo menor, centralizada */
+.logo {
+    max-width: 120px; /* Ajusta o tamanho da logo */
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Container principal estilizado */
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Card com sombra suave e bordas arredondadas */
+.card {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 350px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* Botões estilizados */
+.cadastrar-sinistro {
+    background-color: #318C23; /* Verde médio */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 50px;
+    width: 100%;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+}
+
+.consultar-sinistros {
+    background-color: #43D91A; /* Verde claro */
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 50px;
+    width: 100%;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+}
+
+/* Acessar Console botão */
+.acessar-console {
+    background-color: #8C6316; /* Marrom */
+    color: white;
+    border: none;
+    padding: 10px 30px;
+    border-radius: 50px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
+}
+
+/* Efeito hover nos botões */
+.cadastrar-sinistro:hover, .consultar-sinistros:hover, .acessar-console:hover {
+    background-color: #F2C744; /* Dourado ao passar o mouse */
+    color: #032602;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .card {
+        max-width: 90%;
+    }
+}
+/* Estilizando o botão de "Voltar" */
+.btn-outline-dark {
+    border: 2px solid #318C23;  /* Borda com a cor verde */
+    color: #318C23;             /* Cor do texto verde */
+    padding: 10px 20px;         /* Ajustando o espaçamento */
+    border-radius: 10px;        /* Bordas arredondadas */
+    font-size: 1.1rem;          /* Tamanho do texto */
+    font-weight: bold;          /* Deixando o texto em negrito */
+    transition: background-color 0.3s, color 0.3s; /* Transição suave */
+}
+
+/* Hover para o botão de "Voltar" */
+.btn-outline-dark:hover {
+    background-color: #318C23;  /* Cor de fundo verde ao passar o mouse */
+    color: white;               /* Texto branco ao passar o mouse */
+    border-color: #318C23;      /* Mantendo a borda verde */
+}
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .btn-outline-dark {
+        width: 100%;            /* Botão ocupando 100% da largura em telas menores */
+        font-size: 1rem;        /* Reduzindo o tamanho do texto em telas pequenas */
+    }
+}

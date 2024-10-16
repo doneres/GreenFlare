@@ -1,173 +1,295 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema de Sinistros - GreenFlare</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-        body {
-            background-color: #cccccc;
-            color: #032602;
-            font-family: Arial, sans-serif;
-        }
+      body {
+        background-color: #cccccc;
+        color: #032602;
+        font-family: Arial, sans-serif;
+      }
 
-        .container {
-            margin-top: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            background-color: #fff;
-        }
+      .container {
+        margin-top: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        background-color: #fff;
+      }
 
-        .step {
-            border: 2px solid #318C23;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
-        }
+      .step {
+        border: 2px solid #318c23;
+        border-radius: 5px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+      }
 
+      .step-title {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        color: #318c23;
+      }
+
+      .step-button {
+        background-color: #318c23;
+        color: white;
+        margin-right: 10px;
+      }
+
+      .step-button:hover {
+        background-color: #43d91a;
+      }
+
+      .map-container {
+        height: 300px;
+        width: 100%;
+        border: 2px solid #318c23;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .error-message {
+        color: red;
+        font-size: 0.9em;
+      }
+
+      @media (max-width: 576px) {
         .step-title {
-            font-size: 1.5em;
-            margin-bottom: 15px;
-            color: #318C23;
+          font-size: 1.2em;
         }
-
-        .step-button {
-            background-color: #318C23;
-            color: white;
-            margin-right: 10px;
-        }
-
-        .step-button:hover {
-            background-color: #43D91A;
-        }
-
-        .map-container {
-            height: 300px;
-            width: 100%;
-            border: 2px solid #318C23;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-        }
-
-        @media (max-width: 576px) {
-            .step-title {
-                font-size: 1.2em;
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="container">
-        <img src="../img/logo.png" alt="GreenFlare" class="logo mb-4" height="200em">
+      <img
+        src="../img/logo_cortada.png"
+        alt="GreenFlare"
+        class="logo mb-4"
+        height="200em"
+      />
 
-        <form id="sinistroForm">
-            <!-- Etapa 1: Dados Pessoais -->
-            <div class="step" id="step1">
-                <div class="step-title">Etapa 1: Dados Pessoais</div>
-                <div class="form-group">
-                    <label for="nome">Nome Completo:</label>
-                    <input type="text" class="form-control" id="nome" required>
-                </div>
-                <div class="form-group">
-                    <label for="cpf">CPF:</label>
-                    <input type="text" class="form-control" id="cpf" required maxlength="14" placeholder="xxx.xxx.xxx-xx">
-                    <div id="cpfError" class="error-message"></div>
-                </div>
-                <div class="form-group">
-                    <label for="telefone">Telefone (com DDD):</label>
-                    <input type="text" class="form-control" id="telefone" required maxlength="15" placeholder="(xx) xxxxx-xxxx">
-                    <div id="telefoneError" class="error-message"></div>
-                </div>
-                <button type="button" class="btn step-button" onclick="proximaEtapa(1)">Próxima Etapa</button>
-            </div>
+      <!-- Botão de Voltar -->
+      <a href="/GreenFlare/index.html" class="btn btn-outline-dark mt-4">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </a>
 
-            <!-- Etapa 2: Endereço -->
-            <div class="step d-none" id="step2">
-                <div class="step-title">Etapa 2: Endereço</div>
-                <div class="form-group">
-                    <label for="cep">CEP:</label>
-                    <input type="text" class="form-control" id="cep" required maxlength="10" placeholder="xxxxx-xxx">
-                    <button type="button" class="btn btn-info mt-2" onclick="buscarEndereco()">Buscar Endereço</button>
-                    <div id="cepError" class="error-message"></div>
-                </div>
-                <div class="form-group">
-                    <label for="estado">Estado:</label>
-                    <input type="text" class="form-control" id="estado" required readonly>
-                </div>
-                <div class="form-group">
-                    <label for="cidade">Cidade:</label>
-                    <input type="text" class="form-control" id="cidade" required readonly>
-                </div>
-                <div class="form-group">
-                    <label for="bairro">Bairro:</label>
-                    <input type="text" class="form-control" id="bairro" required readonly>
-                </div>
-                <div class="form-group">
-                    <label for="rua">Rua:</label>
-                    <input type="text" class="form-control" id="rua" required readonly>
-                </div>
-                <div class="form-group">
-                    <label for="numero">Número:</label>
-                    <input type="text" class="form-control" id="numero" required>
-                </div>
-                <div class="form-group">
-                    <label>Mapa:</label>
-                    <div id="map" class="map-container"></div>
-                </div>
-                <button type="button" class="btn step-button" onclick="voltarEtapa(1)">Voltar</button>
-                <button type="button" class="btn step-button" onclick="proximaEtapa(2)">Próxima Etapa</button>
-            </div>
+      <form id="sinistroForm">
+        <!-- Etapa 1: Dados Pessoais -->
+        <div class="step" id="step1">
+          <div class="step-title">Etapa 1: Dados Pessoais</div>
+          <div class="form-group">
+            <label for="nome">Nome Completo:</label>
+            <input type="text" class="form-control" id="nome" required />
+          </div>
+          <div class="form-group">
+            <label for="cpf">CPF:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cpf"
+              required
+              maxlength="14"
+              placeholder="xxx.xxx.xxx-xx"
+            />
+            <div id="cpfError" class="error-message"></div>
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone (com DDD):</label>
+            <input
+              type="text"
+              class="form-control"
+              id="telefone"
+              required
+              maxlength="15"
+              placeholder="(xx) xxxxx-xxxx"
+            />
+            <div id="telefoneError" class="error-message"></div>
+          </div>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="proximaEtapa(1)"
+          >
+            Próxima Etapa
+          </button>
+        </div>
 
-            <!-- Etapa 3: Problema -->
-            <div class="step d-none" id="step3">
-                <div class="step-title">Etapa 3: Problema</div>
-                <div class="form-group">
-                    <label>Escolha as forças de atuação:</label><br>
-                    <label><input type="checkbox" value="Bombeiro"> Bombeiro</label><br>
-                    <label><input type="checkbox" value="Defesa Civil"> Defesa Civil</label><br>
-                    <label><input type="checkbox" value="Polícia Civil"> Polícia Civil</label><br>
-                    <label><input type="checkbox" value="SAMU"> SAMU</label><br>
-                    <label><input type="checkbox" value="Polícia Federal"> Polícia Federal</label><br>
-                    <label><input type="checkbox" value="Polícia Rodoviária Federal"> Polícia Rodoviária Federal</label><br>
-                    <label><input type="checkbox" value="Polícia Militar"> Polícia Militar</label><br>
-                    <label><input type="checkbox" value="Guarda Municipal"> Guarda Municipal</label><br>
-                </div>
-                <div class="form-group">
-                    <label for="motivo">Motivo da chamada:</label>
-                    <textarea class="form-control" id="motivo" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="anexo">Anexar foto ou vídeo (opcional):</label>
-                    <input type="file" class="form-control" id="anexo" accept="image/*,video/*">
-                </div>
-                <button type="button" class="btn step-button" onclick="voltarEtapa(2)">Voltar</button>
-                <button type="button" class="btn step-button" onclick="proximaEtapa(3)">Próxima Etapa</button>
-            </div>
+        <!-- Etapa 2: Endereço -->
+        <div class="step d-none" id="step2">
+          <div class="step-title">Etapa 2: Endereço</div>
+          <div class="form-group">
+            <label for="cep">CEP:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cep"
+              required
+              maxlength="10"
+              placeholder="xxxxx-xxx"
+            />
+            <button
+              type="button"
+              class="btn btn-info mt-2"
+              onclick="buscarEndereco()"
+            >
+              Buscar Endereço
+            </button>
+            <div id="cepError" class="error-message"></div>
+          </div>
+          <div class="form-group">
+            <label for="estado">Estado:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="estado"
+              required
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="cidade">Cidade:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cidade"
+              required
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="bairro">Bairro:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="bairro"
+              required
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="rua">Rua:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="rua"
+              required
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="numero">Número:</label>
+            <input type="text" class="form-control" id="numero" required />
+          </div>
+          <div class="form-group">
+            <label>Mapa:</label>
+            <div id="map" class="map-container"></div>
+          </div>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="voltarEtapa(1)"
+          >
+            Voltar
+          </button>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="proximaEtapa(2)"
+          >
+            Próxima Etapa
+          </button>
+        </div>
 
-            <!-- Etapa 4: Validação -->
-            <div class="step d-none" id="step4">
-                <div class="step-title">Etapa 4: Validação</div>
-                <div id="dadosValidacao"></div>
-                <button type="button" class="btn step-button" onclick="voltarEtapa(3)">Voltar</button>
-                <button type="submit" class="btn step-button">Enviar</button>
-            </div>
-        </form>
+        <!-- Etapa 3: Problema -->
+        <div class="step d-none" id="step3">
+          <div class="step-title">Etapa 3: Problema</div>
+          <div class="form-group">
+            <label>Escolha as forças de atuação:</label><br />
+            <label><input type="checkbox" value="Bombeiro" /> Bombeiro</label
+            ><br />
+            <label
+              ><input type="checkbox" value="Defesa Civil" /> Defesa
+              Civil</label
+            ><br />
+            <label
+              ><input type="checkbox" value="Polícia Civil" /> Polícia
+              Civil</label
+            ><br />
+            <label><input type="checkbox" value="SAMU" /> SAMU</label><br />
+            <label
+              ><input type="checkbox" value="Polícia Federal" /> Polícia
+              Federal</label
+            ><br />
+            <label
+              ><input type="checkbox" value="Polícia Rodoviária Federal" />
+              Polícia Rodoviária Federal</label
+            ><br />
+            <label
+              ><input type="checkbox" value="Polícia Militar" /> Polícia
+              Militar</label
+            ><br />
+            <label
+              ><input type="checkbox" value="Guarda Municipal" /> Guarda
+              Municipal</label
+            ><br />
+          </div>
+          <div class="form-group">
+            <label for="motivo">Motivo da chamada:</label>
+            <textarea class="form-control" id="motivo" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="anexo">Anexar foto ou vídeo (opcional):</label>
+            <input
+              type="file"
+              class="form-control"
+              id="anexo"
+              accept="image/*,video/*"
+            />
+          </div>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="voltarEtapa(2)"
+          >
+            Voltar
+          </button>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="proximaEtapa(3)"
+          >
+            Próxima Etapa
+          </button>
+        </div>
+
+        <!-- Etapa 4: Validação -->
+        <div class="step d-none" id="step4">
+          <div class="step-title">Etapa 4: Validação</div>
+          <div id="dadosValidacao"></div>
+          <button
+            type="button"
+            class="btn step-button"
+            onclick="voltarEtapa(3)"
+          >
+            Voltar
+          </button>
+          <button type="submit" class="btn step-button">Enviar</button>
+        </div>
+      </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -176,61 +298,68 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <script>
-        let currentStep = 1;
+      let currentStep = 1;
 
-        function proximaEtapa(step) {
-            const cpf = document.getElementById("cpf").value;
-            const telefone = document.getElementById("telefone").value;
+      function proximaEtapa(step) {
+        const cpf = document.getElementById("cpf").value;
+        const telefone = document.getElementById("telefone").value;
 
-            if (step === 1) {
-                // Validação CPF
-                if (!validarCPF(cpf)) {
-                    document.getElementById("cpfError").textContent = "CPF inválido.";
-                    return;
-                } else {
-                    document.getElementById("cpfError").textContent = "";
-                }
+        if (step === 1) {
+          // Validação CPF
+          if (!validarCPF(cpf)) {
+            document.getElementById("cpfError").textContent = "CPF inválido.";
+            return;
+          } else {
+            document.getElementById("cpfError").textContent = "";
+          }
 
-                // Validação Telefone
-                if (!validarTelefone(telefone)) {
-                    document.getElementById("telefoneError").textContent = "Telefone inválido.";
-                    return;
-                } else {
-                    document.getElementById("telefoneError").textContent = "";
-                }
-            }
-
-            document.getElementById(`step${currentStep}`).classList.add('d-none');
-            currentStep++;
-            document.getElementById(`step${currentStep}`).classList.remove('d-none');
-
-            if (currentStep === 2) {
-                carregarMapa(); // Carregar o mapa vazio
-            } else if (currentStep === 4) {
-                validarDados();
-            }
+          // Validação Telefone
+          if (!validarTelefone(telefone)) {
+            document.getElementById("telefoneError").textContent =
+              "Telefone inválido.";
+            return;
+          } else {
+            document.getElementById("telefoneError").textContent = "";
+          }
         }
 
-        function voltarEtapa(step) {
-            document.getElementById(`step${currentStep}`).classList.add('d-none');
-            currentStep = step;
-            document.getElementById(`step${currentStep}`).classList.remove('d-none');
+        document.getElementById(`step${currentStep}`).classList.add("d-none");
+        currentStep++;
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("d-none");
+
+        if (currentStep === 2) {
+          carregarMapa(); // Carregar o mapa vazio
+        } else if (currentStep === 4) {
+          validarDados();
         }
+      }
 
-        function validarDados() {
-            const nome = document.getElementById("nome").value;
-            const cpf = document.getElementById("cpf").value;
-            const telefone = document.getElementById("telefone").value;
-            const cep = document.getElementById("cep").value;
-            const estado = document.getElementById("estado").value;
-            const cidade = document.getElementById("cidade").value;
-            const bairro = document.getElementById("bairro").value;
-            const rua = document.getElementById("rua").value;
-            const numero = document.getElementById("numero").value;
-            const motivo = document.getElementById("motivo").value;
-            const anexo = document.getElementById("anexo").files[0] ? document.getElementById("anexo").files[0].name : "Nenhum";
+      function voltarEtapa(step) {
+        document.getElementById(`step${currentStep}`).classList.add("d-none");
+        currentStep = step;
+        document
+          .getElementById(`step${currentStep}`)
+          .classList.remove("d-none");
+      }
 
-            document.getElementById("dadosValidacao").innerHTML = `
+      function validarDados() {
+        const nome = document.getElementById("nome").value;
+        const cpf = document.getElementById("cpf").value;
+        const telefone = document.getElementById("telefone").value;
+        const cep = document.getElementById("cep").value;
+        const estado = document.getElementById("estado").value;
+        const cidade = document.getElementById("cidade").value;
+        const bairro = document.getElementById("bairro").value;
+        const rua = document.getElementById("rua").value;
+        const numero = document.getElementById("numero").value;
+        const motivo = document.getElementById("motivo").value;
+        const anexo = document.getElementById("anexo").files[0]
+          ? document.getElementById("anexo").files[0].name
+          : "Nenhum";
+
+        document.getElementById("dadosValidacao").innerHTML = `
                 <h5>Validação dos Dados:</h5>
                 <p><strong>Nome:</strong> ${nome}</p>
                 <p><strong>CPF:</strong> ${cpf}</p>
@@ -244,93 +373,95 @@
                 <p><strong>Motivo:</strong> ${motivo}</p>
                 <p><strong>Anexo:</strong> ${anexo}</p>
             `;
-        }
+      }
 
-        function buscarEndereco() {
-            const cep = document.getElementById("cep").value;
-            const url = `https://viacep.com.br/ws/${cep}/json/`;
+      function buscarEndereco() {
+        const cep = document.getElementById("cep").value;
+        const url = `https://viacep.com.br/ws/${cep}/json/`;
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.erro) {
-                        document.getElementById("cepError").textContent = "CEP não encontrado.";
-                        return;
-                    }
-
-                    document.getElementById("estado").value = data.uf;
-                    document.getElementById("cidade").value = data.localidade;
-                    document.getElementById("bairro").value = data.bairro;
-                    document.getElementById("rua").value = data.logradouro;
-                    document.getElementById("cepError").textContent = "";
-                    carregarMapa(data.logradouro, data.localidade, data.uf);
-                });
-        }
-
-        function carregarMapa(rua = '', cidade = '', estado = '') {
-            const mapContainer = document.getElementById("map");
-            mapContainer.innerHTML = ''; // Limpar mapa existente
-            const map = L.map(mapContainer).setView([-15.7801, -47.9292], 4); // Posição inicial
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 18,
-            }).addTo(map);
-
-            // Adiciona um marcador
-            const marker = L.marker([-15.7801, -47.9292]).addTo(map); // Coordenadas iniciais
-            marker.bindPopup('Localização Atual').openPopup();
-
-            if (rua && cidade && estado) {
-                // Ajustar o marcador com base no endereço
-                const address = `${rua}, ${cidade}, ${estado}`;
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${address}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length) {
-                            const lat = data[0].lat;
-                            const lon = data[0].lon;
-                            map.setView([lat, lon], 15);
-                            marker.setLatLng([lat, lon]);
-                            marker.bindPopup(`Localização: ${address}`).openPopup();
-                        } else {
-                            alert("Endereço não encontrado.");
-                        }
-                    });
+        fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.erro) {
+              document.getElementById("cepError").textContent =
+                "CEP não encontrado.";
+              return;
             }
+
+            document.getElementById("estado").value = data.uf;
+            document.getElementById("cidade").value = data.localidade;
+            document.getElementById("bairro").value = data.bairro;
+            document.getElementById("rua").value = data.logradouro;
+            document.getElementById("cepError").textContent = "";
+            carregarMapa(data.logradouro, data.localidade, data.uf);
+          });
+      }
+
+      function carregarMapa(rua = "", cidade = "", estado = "") {
+        const mapContainer = document.getElementById("map");
+        mapContainer.innerHTML = ""; // Limpar mapa existente
+        const map = L.map(mapContainer).setView([-15.7801, -47.9292], 4); // Posição inicial
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 18,
+        }).addTo(map);
+
+        // Adiciona um marcador
+        const marker = L.marker([-15.7801, -47.9292]).addTo(map); // Coordenadas iniciais
+        marker.bindPopup("Localização Atual").openPopup();
+
+        if (rua && cidade && estado) {
+          // Ajustar o marcador com base no endereço
+          const address = `${rua}, ${cidade}, ${estado}`;
+          fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${address}`
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.length) {
+                const lat = data[0].lat;
+                const lon = data[0].lon;
+                map.setView([lat, lon], 15);
+                marker.setLatLng([lat, lon]);
+                marker.bindPopup(`Localização: ${address}`).openPopup();
+              } else {
+                alert("Endereço não encontrado.");
+              }
+            });
         }
+      }
 
-        function validarCPF(cpf) {
-            // Remove caracteres não numéricos
-            cpf = cpf.replace(/[^\d]+/g, '');
-            if (cpf.length !== 11) return false;
+      function validarCPF(cpf) {
+        // Remove caracteres não numéricos
+        cpf = cpf.replace(/[^\d]+/g, "");
+        if (cpf.length !== 11) return false;
 
-            let soma = 0;
-            let resto;
+        let soma = 0;
+        let resto;
 
-            for (let i = 1; i <= 9; i++) {
-                soma += parseInt(cpf[i - 1]) * (11 - i);
-            }
-            resto = (soma * 10) % 11;
-            if ((resto === 10) || (resto === 11)) resto = 0;
-            if (resto !== parseInt(cpf[9])) return false;
-
-            soma = 0;
-            for (let i = 1; i <= 10; i++) {
-                soma += parseInt(cpf[i - 1]) * (12 - i);
-            }
-            resto = (soma * 10) % 11;
-            if ((resto === 10) || (resto === 11)) resto = 0;
-            if (resto !== parseInt(cpf[10])) return false;
-
-            return true;
+        for (let i = 1; i <= 9; i++) {
+          soma += parseInt(cpf[i - 1]) * (11 - i);
         }
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf[9])) return false;
 
-        function validarTelefone(telefone) {
-            // Remove caracteres não numéricos
-            telefone = telefone.replace(/[^\d]+/g, '');
-            return telefone.length === 11; // DDD + 9 dígitos
+        soma = 0;
+        for (let i = 1; i <= 10; i++) {
+          soma += parseInt(cpf[i - 1]) * (12 - i);
         }
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf[10])) return false;
+
+        return true;
+      }
+
+      function validarTelefone(telefone) {
+        // Remove caracteres não numéricos
+        telefone = telefone.replace(/[^\d]+/g, "");
+        return telefone.length === 11; // DDD + 9 dígitos
+      }
     </script>
-</body>
-
+  </body>
 </html>
